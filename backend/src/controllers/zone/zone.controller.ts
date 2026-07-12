@@ -1,21 +1,22 @@
-import { Request, Response } from "express";
-import { createZoneSchema } from "../../services/zone/zone.validation";
+import { asyncHandler } from "../../utils/asyncHandler";
+import { ApiResponse } from "../../utils/ApiResponse";
 import { createZone } from "../../services/zone/zone.service";
 
-export const createZoneController = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const data = createZoneSchema.parse(req.body);
+export const createZoneController =
+asyncHandler(
+async(req,res)=>{
 
-    const result = await createZone(data);
+const result = await createZone(req.body);
 
-    return res.status(201).json(result);
-  } catch (error: any) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+res
+.status(201)
+.json(
+new ApiResponse(
+201,
+result,
+"Zone Created Successfully"
+)
+);
+
+}
+);

@@ -1,5 +1,6 @@
 import prisma from "../../lib/prisma";
 import { CreateZoneInput } from "./zone.validation";
+import { ApiError } from "../../utils/ApiError";
 
 export const createZone = async (
   data: CreateZoneInput
@@ -11,7 +12,10 @@ export const createZone = async (
   });
 
   if (existing) {
-    throw new Error("Zone already exists");
+    throw new ApiError(
+409,
+"Zone already exists"
+)
   }
 
   const zone = await prisma.zone.create({

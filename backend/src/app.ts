@@ -3,6 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 
 import routes from "./routes";
+import { errorHandler } from "./middleware/error.middleware";
 
 const app = express();
 
@@ -24,4 +25,10 @@ app.get("/", (_, res) => {
 */
 app.use("/api/v1", routes);
 
+
+
+
+app.use(errorHandler);
+
 export default app;
+
