@@ -1,4 +1,5 @@
-export const config = {
-  PORT: process.env.PORT || "5000",
-  JWT_SECRET: process.env.JWT_SECRET || "",
-};
+DATABASE_URL="postgresql://postgres:prostgres@localhost:5432/lastmile_delivery?schema=public"
+
+JWT_SECRET=your_super_secret_key
+
+PORT=5000

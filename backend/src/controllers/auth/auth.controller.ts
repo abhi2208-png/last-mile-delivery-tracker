@@ -5,18 +5,34 @@ import {
   getCurrentUser,
 } from "../../services/auth/auth.service";
 
+import { registerSchema } from "../../services/auth/auth.validation";
+
 export const register = async (req: Request, res: Response) => {
-  const result = await registerUser();
+  try {
+    const data = registerSchema.parse(req.body);
 
-  return res.status(200).json(result);
+    const result = await registerUser(data);
+
+    return res.status(201).json(result);
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
-
 export const login = async (req: Request, res: Response) => {
-  const result = await loginUser();
+  try {
+    const result = await loginUser();
 
-  return res.status(200).json(result);
+    return res.status(200).json(result);
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
-
 export const me = async (req: Request, res: Response) => {
   const result = await getCurrentUser();
 
