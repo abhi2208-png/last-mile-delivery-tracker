@@ -1,11 +1,13 @@
-import { Request, Response } from "express";
+import {
+  registerSchema,
+  loginSchema,
+} from "../../services/auth/auth.validation";
+
 import {
   registerUser,
   loginUser,
   getCurrentUser,
 } from "../../services/auth/auth.service";
-
-import { registerSchema } from "../../services/auth/auth.validation";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -23,7 +25,9 @@ export const register = async (req: Request, res: Response) => {
 };
 export const login = async (req: Request, res: Response) => {
   try {
-    const result = await loginUser();
+    const data = loginSchema.parse(req.body);
+
+    const result = await loginUser(data);
 
     return res.status(200).json(result);
   } catch (error: any) {
@@ -33,8 +37,17 @@ export const login = async (req: Request, res: Response) => {
     });
   }
 };
-export const me = async (req: Request, res: Response) => {
-  const result = await getCurrentUser();
+import { AuthRequest } from "../../middleware/auth/auth.middleware";
 
-  return res.status(200).json(result);
+export const me = async (req: AuthRequest, res: Response) => {
+  try {
+    const result = await getCurrentUser(req.user!.id);
+
+    return res.status(200).json(result);
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
