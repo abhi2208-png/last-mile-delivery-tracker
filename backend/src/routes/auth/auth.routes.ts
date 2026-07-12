@@ -1,35 +1,17 @@
 import { Router } from "express";
 
+import {
+  register,
+  login,
+  me,
+} from "../../controllers/auth/auth.controller";
+
 const router = Router();
 
-/*
-    POST /api/v1/auth/register
-*/
-router.post("/register", (req, res) => {
-  return res.status(200).json({
-    success: true,
-    message: "Register endpoint working",
-  });
-});
+router.post("/register", register);
 
-/*
-    POST /api/v1/auth/login
-*/
-router.post("/login", (req, res) => {
-  return res.status(200).json({
-    success: true,
-    message: "Login endpoint working",
-  });
-});
+router.post("/login", login);
 
-/*
-    GET /api/v1/auth/me
-*/
-router.get("/me", (req, res) => {
-  return res.status(200).json({
-    success: true,
-    message: "Current User endpoint working",
-  });
-});
+router.get("/me", me);
 
 export default router;
