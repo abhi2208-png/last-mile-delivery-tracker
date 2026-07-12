@@ -2,10 +2,14 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 
+import routes from "./routes";
+
 const app = express();
 
 app.use(cors());
+
 app.use(express.json());
+
 app.use(morgan("dev"));
 
 app.get("/", (_, res) => {
@@ -14,5 +18,10 @@ app.get("/", (_, res) => {
     message: "Last Mile Delivery API Running",
   });
 });
+
+/*
+    API Routes
+*/
+app.use("/api/v1", routes);
 
 export default app;
