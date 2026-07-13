@@ -1,11 +1,12 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 enum Role {
   ADMIN
   CUSTOMER
@@ -75,15 +76,17 @@ model RateCard {
   dropZoneId   String
 
   pickupZone Zone @relation("PickupZone", fields: [pickupZoneId], references: [id])
-  dropZone   Zone @relation("DropZone", fields: [dropZoneId], references: [id])
+
+  dropZone Zone @relation("DropZone", fields: [dropZoneId], references: [id])
 
   orderType OrderType
 
   pricePerKg Float
-
-  codCharge Float
+  codCharge  Float
 
   createdAt DateTime @default(now())
+
+  @@unique([pickupZoneId, dropZoneId, orderType])
 }
 
 model Order {
