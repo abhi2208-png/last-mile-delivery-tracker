@@ -7,6 +7,7 @@ export const authorize = (...roles: string[]) => {
     res: Response,
     next: NextFunction
   ) => {
+    console.log(req.user);
     if (!req.user || !roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
@@ -17,3 +18,4 @@ export const authorize = (...roles: string[]) => {
     next();
   };
 };
+console.log(authorize);

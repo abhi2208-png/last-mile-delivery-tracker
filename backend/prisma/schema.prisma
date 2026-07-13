@@ -43,6 +43,14 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  currentLatitude  Float?
+  currentLongitude Float?
+
+  isAvailable Boolean @default(true)
+
+  assignedZoneId String?
+  assignedZone   Zone?   @relation(fields: [assignedZoneId], references: [id])
+
   orders      Order[] @relation("CustomerOrders")
   agentOrders Order[] @relation("AgentOrders")
 }
@@ -59,14 +67,22 @@ model Zone {
   dropOrders   Order[] @relation("DropZoneOrders")
 
   areas Area[]
+
+  agents User[]
 }
 
 model Area {
   id   String @id @default(cuid())
-  name String @unique
+  name String
 
   zoneId String
   zone   Zone   @relation(fields: [zoneId], references: [id])
+
+  pickupOrders Order[] @relation("PickupArea")
+  dropOrders   Order[] @relation("DropArea")
+
+  @@unique([name, zoneId])
+  @@index([zoneId])
 }
 
 model RateCard {
@@ -87,10 +103,14 @@ model RateCard {
   createdAt DateTime @default(now())
 
   @@unique([pickupZoneId, dropZoneId, orderType])
+  @@index([pickupZoneId])
+  @@index([dropZoneId])
 }
 
 model Order {
   id String @id @default(cuid())
+
+  orderNumber String @unique
 
   customerId String
   customer   User   @relation("CustomerOrders", fields: [customerId], references: [id])
@@ -101,40 +121,41 @@ model Order {
   pickupAddress String
   dropAddress   String
 
+  pickupAreaId String
+  pickupArea   Area   @relation("PickupArea", fields: [pickupAreaId], references: [id])
+
+  dropAreaId String
+  dropArea   Area   @relation("DropArea", fields: [dropAreaId], references: [id])
+
   pickupZoneId String
-  dropZoneId   String
+  pickupZone   Zone   @relation("PickupZoneOrders", fields: [pickupZoneId], references: [id])
 
-  pickupZone Zone @relation("PickupZoneOrders", fields: [pickupZoneId], references: [id])
-
-  dropZone Zone @relation("DropZoneOrders", fields: [dropZoneId], references: [id])
+  dropZoneId String
+  dropZone   Zone   @relation("DropZoneOrders", fields: [dropZoneId], references: [id])
 
   length  Float
   breadth Float
   height  Float
 
-  actualWeight Float
-
+  actualWeight     Float
   volumetricWeight Float
+  billableWeight   Float
 
-  billableWeight Float
-
-  charge Float
+  totalCharge Float
 
   paymentType PaymentType
-
-  orderType OrderType
+  orderType   OrderType
 
   status OrderStatus @default(CREATED)
 
-  createdAt DateTime @default(now())
+  remarks String?
 
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tracking TrackingHistory[]
-
+  tracking      TrackingHistory[]
   notifications Notification[]
-
-  reschedules Reschedule[]
+  reschedules   Reschedule[]
 
   @@index([customerId])
   @@index([agentId])
@@ -152,7 +173,7 @@ model TrackingHistory {
 
   status OrderStatus
 
-  updatedBy String
+  updatedById String?
 
   timestamp DateTime @default(now())
 }
